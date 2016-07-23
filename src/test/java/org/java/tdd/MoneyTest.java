@@ -1,6 +1,7 @@
 package org.java.tdd;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -11,13 +12,14 @@ import static org.junit.Assert.assertTrue;
  * Created by mgupta on 6/13/16.
  */
 
-// TODO :
-// - $5 + 10CHF = $10 (2:1)
-// - $5 + $5 = $10
-
 public class MoneyTest {
 
-    private Bank bank = new Bank();
+    private Bank bank;
+
+    @Before
+    public void setup() {
+        bank = new Bank();
+    }
 
     @Test
     public void testMultiplication() {
@@ -56,7 +58,6 @@ public class MoneyTest {
         Expression expression = new Sum(Money.dollar(3), Money.dollar(4));
         Money result = bank.reduce(expression, "USD");
         assertEquals(Money.dollar(7), result);
-
     }
 
     @Test
@@ -84,6 +85,31 @@ public class MoneyTest {
         bank.addRate("CHF", "USD", 2);
         Money result = bank.reduce(fiveBucks.plus(tenFrancs), "USD");
         Assert.assertEquals(Money.dollar(10), result);
-
     }
+
+    @Test
+    public void testSumPlusMoney() throws Exception {
+        Expression fiveBucks = Money.dollar(5);
+        Expression tenFrancs = Money.franc(10);
+        bank.addRate("CHF", "USD", 2);
+        Expression sum = new Sum(fiveBucks, tenFrancs).plus(fiveBucks);
+        Money result = bank.reduce(sum, "USD");
+        Assert.assertEquals(Money.dollar(15), result);
+    }
+
+    @Test
+    public void testSumTimes() throws Exception {
+        Expression fiveBucks = Money.dollar(5);
+        Expression tenFrancs = Money.franc(10);
+        bank.addRate("CHF", "USD", 2);
+        Expression sum = new Sum(fiveBucks, tenFrancs).times(2);
+        Money result = bank.reduce(sum, "USD");
+        Assert.assertEquals(Money.dollar(20), result);
+    }
+
+    /*@Test
+    public void testPlusSameCurrencyReturnsMoney() throws Exception {
+        Expression sum = Money.dollar(1).plus(Money.dollar(1));
+        assertTrue(sum instanceof Money);
+    }*/
 }
