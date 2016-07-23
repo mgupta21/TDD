@@ -5,7 +5,7 @@ package org.java.tdd;
  */
 public class Money implements Expression {
 
-    protected int    amount;
+    protected int amount;
     protected String currency;
 
     public Money(int amount, String currency) {
@@ -38,8 +38,11 @@ public class Money implements Expression {
         return amount + " " + currency;
     }
 
-    @Override
     public Expression plus(Money added) {
-        return new Money(amount + added.amount, currency);
+        return new Sum(this, added);
+    }
+
+    public Money reduce(Bank bank, String to) {
+        return new Money(amount / bank.rate(currency, to), to);
     }
 }

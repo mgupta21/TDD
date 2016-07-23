@@ -1,10 +1,8 @@
 package org.java.tdd;
 
 /**
- * Created by mgupta on 6/27/16.
+ * Created by mgupta on 7/22/16.
  */
-interface Expression {
-
-    Expression plus(Money added);
-
+public interface Expression {
+    Money reduce(Bank bank, String to);
 }

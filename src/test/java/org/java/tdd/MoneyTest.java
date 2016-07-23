@@ -1,5 +1,6 @@
 package org.java.tdd;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -9,6 +10,11 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by mgupta on 6/13/16.
  */
+
+// TODO :
+// - $5 + 10CHF = $10 (2:1)
+// - $5 + $5 = $10
+
 public class MoneyTest {
 
     private Bank bank = new Bank();
@@ -37,9 +43,37 @@ public class MoneyTest {
     @Test
     public void testSimpleAddition() {
         Money five = Money.dollar(5);
-        Expression sum = five.plus(five);
+        Expression expression = five.plus(five);
+        Sum sum = (Sum) expression;
+        Assert.assertEquals(five, sum.augend);
+        Assert.assertEquals(five, sum.addend);
         Money reduced = bank.reduce(sum, "USD");
-        assertEquals(Money.dollar(10), reduced);
+        Assert.assertEquals(Money.dollar(10), reduced);
     }
 
+    @Test
+    public void testReduceSum() throws Exception {
+        Expression expression = new Sum(Money.dollar(3), Money.dollar(4));
+        Money result = bank.reduce(expression, "USD");
+        assertEquals(Money.dollar(7), result);
+
+    }
+
+    @Test
+    public void testBankReduceMoney() throws Exception {
+        Money result = bank.reduce(Money.dollar(1), "USD");
+        Assert.assertEquals(Money.dollar(1), result);
+    }
+
+    @Test
+    public void testReduceMoneyDifferentCurrency() throws Exception {
+        bank.addRate("CHF", "USD", 2);
+        Money result = bank.reduce(Money.franc(2), "USD");
+        Assert.assertEquals(Money.dollar(1), result);
+    }
+
+    @Test
+    public void testIdentityRate() throws Exception {
+        Assert.assertEquals(1, new Bank().rate("USD", "USD"));
+    }
 }
