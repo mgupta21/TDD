@@ -2,48 +2,75 @@
 __author__ = 'Mayank'
 
 
-class TestCase(object):
-    def __init__(self, name):
-        self.name = name
+# The first argument of every class method, including __init__, is always a reference to the current instance of the class.
+# __init__ is the optional constructor of class
 
-    def setUp(self):
+# super class
+class TestCase(object):
+    def __init__(self, methodName):
+        self.methodName = methodName
+
+    def setUp(self):  # no-Opt. empty method (kind of abstract)
+        pass
+
+    def tearDown(self): # no-Opt
         pass
 
     def run(self):
-        self.setUp()
-        method = getattr(self, self.name)
+        self.setUp() # Ensure setup is always run before method run
+        method = getattr(self, self.methodName)
         method()
+        self.tearDown()
 
 
+# sub class
 class TestCaseTest(TestCase):
-    def testRunning(self):
-        test.run()
-        assert (self.test.wasRun)
 
-    def testSetUp(self):
-        test.run()
-        assert (self.test.wasSetup)
+    # Tested in testSetup itself
+    # def testRunning(self):
+    #     # test = WasRun("testMethod") # Moved to setup
+    #     # assert (not test.wasRun)
+    #     self.test.run()
+    #     assert self.test.wasRun
 
-    def setUp(self):
+    # def testSetup(self):
+    #     #test = WasRun("testMethod") # Moved to setup
+    #     self.test.run()
+    #     # assert self.test.wasSetup
+    #     assert ("setup testMethod " == self.test.log)
+
+    # Renamed testSetup
+    def testTemplateMethod(self):
         self.test = WasRun("testMethod")
+        self.test.run()
+        assert ("setup testMethod tearDown " == self.test.log)
+
+    # def setUp(self): # override super class method
+    #     self.test = WasRun("testMethod")
 
 
+# sub class
 class WasRun(TestCase):
-    def __init__(self, name):
+    def __init__(self, methodName):
         # self.wasRun = None
-        # self.name = name
-        TestCase.__init__(self, name)
+        # self.methodName = methodName
+        TestCase.__init__(self, methodName)  # same as super(arg);
 
-    def setUp(self):
-        self.wasRun = None
-        self.wasSetUp = 1
+    def setUp(self):  # override empty method from super
+        # self.wasRun = None # Moved from constructor
+        # self.wasSetup = 1
+        self.log = "setup " # used to remove all flags
 
-    def testMethod(self):
-        self.wasRun = 1
+    def testMethod(self): # Some method to run
+        # self.wasRun = 1
+        self.log = self.log + "testMethod "
 
+    def tearDown(self):
+        self.log = self.log + "tearDown "
 
+        # 1) Moved constant code to super class. 2) Uses attributes only in super class, belongs there
         # def run(self):
-        #     method = getattr(self, self.name)
+        #     method = getattr(self, self.methodName)
         #     method()
 
 
@@ -52,4 +79,7 @@ class WasRun(TestCase):
 # test.run()
 # print test.wasRun
 
-TestCaseTest("testRunning").run()
+#TestCaseTest("testRunning").run() # super class constructor takes test method to run as argument
+#TestCaseTest("testSetup").run()
+
+TestCaseTest("testTemplateMethod").run()
