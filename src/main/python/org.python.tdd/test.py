@@ -13,11 +13,11 @@ class TestCase(object):
     def setUp(self):  # no-Opt. empty method (kind of abstract)
         pass
 
-    def tearDown(self): # no-Opt
+    def tearDown(self):  # no-Opt
         pass
 
     def run(self):
-        self.setUp() # Ensure setup is always run before method run
+        self.setUp()  # Ensure setup is always run before method run
         method = getattr(self, self.methodName)
         method()
         self.tearDown()
@@ -25,7 +25,6 @@ class TestCase(object):
 
 # sub class
 class TestCaseTest(TestCase):
-
     # Tested in testSetup itself
     # def testRunning(self):
     #     # test = WasRun("testMethod") # Moved to setup
@@ -45,8 +44,8 @@ class TestCaseTest(TestCase):
         self.test.run()
         assert ("setup testMethod tearDown " == self.test.log)
 
-    # def setUp(self): # override super class method
-    #     self.test = WasRun("testMethod")
+        # def setUp(self): # override super class method
+        #     self.test = WasRun("testMethod")
 
 
 # sub class
@@ -59,9 +58,9 @@ class WasRun(TestCase):
     def setUp(self):  # override empty method from super
         # self.wasRun = None # Moved from constructor
         # self.wasSetup = 1
-        self.log = "setup " # used to remove all flags
+        self.log = "setup "  # used to remove all flags
 
-    def testMethod(self): # Some method to run
+    def testMethod(self):  # Some method to run
         # self.wasRun = 1
         self.log = self.log + "testMethod "
 
@@ -79,7 +78,7 @@ class WasRun(TestCase):
 # test.run()
 # print test.wasRun
 
-#TestCaseTest("testRunning").run() # super class constructor takes test method to run as argument
-#TestCaseTest("testSetup").run()
+# TestCaseTest("testRunning").run() # super class constructor takes test method to run as argument
+# TestCaseTest("testSetup").run()
 
 TestCaseTest("testTemplateMethod").run()
